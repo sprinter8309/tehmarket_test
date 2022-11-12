@@ -1,53 +1,57 @@
 <?php
-
-/** @var yii\web\View $this */
-
-$this->title = 'My Yii Application';
+use app\models\Tree;
+use kartik\tree\TreeView;
+use kartik\tree\TreeViewInput;
+$this->title = 'Тестовое задание Техмаркет';
 ?>
-<div class="site-index">
 
-    <div class="jumbotron text-center bg-transparent">
-        <h1 class="display-4">Congratulations!</h1>
-
-        <p class="lead">You have successfully created your Yii-powered application.</p>
-
-        <p><a class="btn btn-lg btn-success" href="http://www.yiiframework.com">Get started with Yii</a></p>
-    </div>
-
-    <div class="body-content">
-
-        <div class="row">
-            <div class="col-lg-4">
-                <h2>Heading</h2>
-
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                    ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                    fugiat nulla pariatur.</p>
-
-                <p><a class="btn btn-outline-secondary" href="http://www.yiiframework.com/doc/">Yii Documentation &raquo;</a></p>
-            </div>
-            <div class="col-lg-4">
-                <h2>Heading</h2>
-
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                    ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                    fugiat nulla pariatur.</p>
-
-                <p><a class="btn btn-outline-secondary" href="http://www.yiiframework.com/forum/">Yii Forum &raquo;</a></p>
-            </div>
-            <div class="col-lg-4">
-                <h2>Heading</h2>
-
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                    ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                    fugiat nulla pariatur.</p>
-
-                <p><a class="btn btn-outline-secondary" href="http://www.yiiframework.com/extensions/">Yii Extensions &raquo;</a></p>
-            </div>
-        </div>
-
-    </div>
+<div class="info-label">
+    Переход на страницу категории
 </div>
+
+<?php
+
+echo TreeViewInput::widget([
+    'query'             => Tree::find()->addOrderBy('root, lft'), 
+    'headingOptions'    => ['label' => 'Categories'],
+    'name'              => 'kv-product',    // input name
+    'value'             => '',         // values selected (comma separated for multiple select)
+    'asDropdown'        => false,            // will render the tree input widget as a dropdown.
+    'multiple'          => false,            // set to false if you do not need multiple selection
+    'fontAwesome'       => true,            // render font awesome icons
+    'options'=>[
+        'id'=>'tree-view-input'
+    ],
+    'rootOptions'       => [
+        'label' => '<i class="fa fa-tree"></i>', 
+        'class'=>'text-success'
+    ], 
+]);
+
+?>
+
+
+
+<div class="info-label">
+    Изменение данных
+    <br>
+    (Для перемещения категорий используются стрелки вверх/вниз (Move Up/Move Down))
+</div>
+
+
+<?php
+
+echo TreeView::widget([
+    // single query fetch to render the tree
+    'query'             => Tree::find()->addOrderBy('root, lft'), 
+    'headingOptions'    => ['label' => 'Categories'],
+    'isAdmin'           => false,                       // optional (toggle to enable admin mode)
+    'displayValue'      => 1,                           // initial display value
+    'options'=>[
+        'id'=>'tree-view'
+    ],
+    //'softDelete'      => true,                        // normally not needed to change
+    //'cacheSettings'   => ['enableCache' => true]      // normally not needed to change
+]);
+
+?>

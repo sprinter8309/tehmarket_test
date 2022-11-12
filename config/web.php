@@ -2,6 +2,7 @@
 
 $params = require __DIR__ . '/params.php';
 $db = require __DIR__ . '/db.php';
+$db_local = require __DIR__ . '/db_local.php';
 
 $config = [
     'id' => 'basic',
@@ -10,6 +11,12 @@ $config = [
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
         '@npm'   => '@vendor/npm-asset',
+    ],
+    'modules'=> [
+        'treemanager' =>  [
+            'class' => '\kartik\tree\Module',
+            // other module settings, refer detailed documentation
+        ]
     ],
     'components' => [
         'request' => [
@@ -41,15 +48,19 @@ $config = [
                 ],
             ],
         ],
-        'db' => $db,
-        /*
+        'db' => $db_local,
+        
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
+                'category/<category_id:\d+>'=>'site/category',
+                'load'=>'site/load',
+                'index'=>'site/index',
+                ''=>'site/index'
             ],
         ],
-        */
+        
     ],
     'params' => $params,
 ];

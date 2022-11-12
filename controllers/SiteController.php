@@ -2,42 +2,11 @@
 
 namespace app\controllers;
 
-use Yii;
-use yii\filters\AccessControl;
 use yii\web\Controller;
-use yii\web\Response;
-use yii\filters\VerbFilter;
-use app\models\LoginForm;
-use app\models\ContactForm;
+use app\models\Tree;
 
 class SiteController extends Controller
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function behaviors()
-    {
-        return [
-            'access' => [
-                'class' => AccessControl::class,
-                'only' => ['logout'],
-                'rules' => [
-                    [
-                        'actions' => ['logout'],
-                        'allow' => true,
-                        'roles' => ['@'],
-                    ],
-                ],
-            ],
-            'verbs' => [
-                'class' => VerbFilter::class,
-                'actions' => [
-                    'logout' => ['post'],
-                ],
-            ],
-        ];
-    }
-
     /**
      * {@inheritdoc}
      */
@@ -54,75 +23,46 @@ class SiteController extends Controller
         ];
     }
 
-    /**
-     * Displays homepage.
-     *
-     * @return string
-     */
     public function actionIndex()
     {
         return $this->render('index');
     }
-
-    /**
-     * Login action.
-     *
-     * @return Response|string
-     */
-    public function actionLogin()
+    
+    public function actionLoad()
     {
-        if (!Yii::$app->user->isGuest) {
-            return $this->goHome();
+        $base_category = new Tree(['name'=>'Categories']);
+        $base_category->makeRoot();
+        
+        for ($i=0; $i<5; $i++) {
+            $first_level_category = new Tree(['name'=>'Category_'.$i]);
+            $first_level_category->appendTo($base_category);
+            
+            for ($j=0; $j<20; $j++) {
+                $second_level_category = new Tree(['name'=>'Sub_Category_'.$i.'_'.$j]);
+                $second_level_category->appendTo($first_level_category);
+                
+                for ($k=0; $k<5; $k++) {
+                    $third_level_category = new Tree(['name'=>'Sub_Sub_Category_'.$i.'_'.$j.'_'.$k]);
+                    $third_level_category->appendTo($second_level_category);
+                    
+                    for ($l=0; $l<10; $l++) {
+                        $fourth_level_category = new Tree(['name'=>'Sub_Sub_Sub_Category_'.$i.'_'.$j.'_'.$k.'_'.$l]);
+                        $fourth_level_category->appendTo($third_level_category);
+                    }
+                }
+            }
         }
-
-        $model = new LoginForm();
-        if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            return $this->goBack();
-        }
-
-        $model->password = '';
-        return $this->render('login', [
-            'model' => $model,
+        
+        echo 'Load complete';
+    }
+    
+    public function actionCategory(string $category_id)
+    {
+        $selected_category = Tree::findOne(['id'=>$category_id]);
+                
+        return $this->render('category', [
+            'full_path'=>$selected_category->parents()->all(),
+            'category_name'=>$selected_category->name
         ]);
-    }
-
-    /**
-     * Logout action.
-     *
-     * @return Response
-     */
-    public function actionLogout()
-    {
-        Yii::$app->user->logout();
-
-        return $this->goHome();
-    }
-
-    /**
-     * Displays contact page.
-     *
-     * @return Response|string
-     */
-    public function actionContact()
-    {
-        $model = new ContactForm();
-        if ($model->load(Yii::$app->request->post()) && $model->contact(Yii::$app->params['adminEmail'])) {
-            Yii::$app->session->setFlash('contactFormSubmitted');
-
-            return $this->refresh();
-        }
-        return $this->render('contact', [
-            'model' => $model,
-        ]);
-    }
-
-    /**
-     * Displays about page.
-     *
-     * @return string
-     */
-    public function actionAbout()
-    {
-        return $this->render('about');
     }
 }
